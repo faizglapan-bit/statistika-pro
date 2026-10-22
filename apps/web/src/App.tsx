@@ -22,6 +22,7 @@ import {
 } from '@/components/dialogs'
 import { useBackendHealth } from '@/hooks/useBackendHealth'
 import { useDataEditor } from '@/hooks/useDataEditor'
+import { SettingsView } from '@/components/SettingsView'
 import { MenuId, AnalysisOutput, ProjectDetail } from '@/types'
 import * as projectApi from '@/services/projectApi'
 
@@ -292,6 +293,13 @@ function AppContent() {
             onOpenAnalysis={() => setActiveMenu('analysis')}
           />
         )
+      case 'settings':
+        return (
+          <SettingsView
+            backendStatus={backendStatus}
+            onRefreshHealth={checkHealth}
+          />
+        )
       default:
         return (
           <ComingSoonView
@@ -309,6 +317,7 @@ function AppContent() {
         backendStatus={backendStatus}
         project={editor.project}
         onNewProject={handleNewProject}
+        onOpenSettings={() => setActiveMenu('settings')}
       />
 
       {/* Tahap 7: Project Header Bar */}

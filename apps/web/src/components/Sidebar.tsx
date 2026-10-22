@@ -76,8 +76,8 @@ const MENU_ITEMS: MenuItem[] = [
     labelId: 'Pengaturan',
     labelEn: 'Settings',
     icon: 'Settings',
-    comingSoon: true,
-    description: { id: 'Konfigurasi aplikasi', en: 'Application settings' },
+    comingSoon: false,
+    description: { id: 'Konfigurasi koneksi API & penyimpanan', en: 'API connection & storage settings' },
   },
 ]
 

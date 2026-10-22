@@ -259,14 +259,14 @@ export function useDataEditor() {
   const saveDataset = useCallback(async () => {
     setIsLoading(true)
     try {
-      if (datasetId) {
+      if (datasetId && !datasetId.startsWith('local_')) {
         const updated = await datasetApi.updateDataset(datasetId, {
           name: datasetName,
           variables,
           rows,
         })
         initFromDataset(updated)
-        setStatusMessage({ type: 'success', text: `Dataset '${datasetName}' berhasil disimpan.` })
+        setStatusMessage({ type: 'success', text: `Dataset '${datasetName}' berhasil disimpan ke server.` })
       } else {
         const created = await datasetApi.createDataset({
           name: datasetName,
@@ -277,7 +277,38 @@ export function useDataEditor() {
         setStatusMessage({ type: 'success', text: `Dataset baru '${datasetName}' berhasil dibuat dan disimpan.` })
       }
     } catch (err: any) {
-      setStatusMessage({ type: 'error', text: err.message || 'Gagal menyimpan dataset ke server.' })
+      // Offline LocalStorage fallback agar data user 100% aman
+      try {
+        const fallbackId = datasetId || `local_${Date.now()}`
+        const localDataset: Dataset = {
+          id: fallbackId,
+          name: datasetName,
+          variables,
+          rows,
+          is_demo: false,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+        localStorage.setItem(`statpro_dataset_${fallbackId}`, JSON.stringify(localDataset))
+        
+        // Simpan index daftar dataset lokal
+        const rawIndex = localStorage.getItem('statpro_local_datasets_index')
+        const indexList: string[] = rawIndex ? JSON.parse(rawIndex) : []
+        if (!indexList.includes(fallbackId)) {
+          indexList.push(fallbackId)
+          localStorage.setItem('statpro_local_datasets_index', JSON.stringify(indexList))
+        }
+
+        setDatasetId(fallbackId)
+        setIsSaved(true)
+        setLastSaved(new Date())
+        setStatusMessage({
+          type: 'info',
+          text: `Backend offline: Dataset '${datasetName}' berhasil disimpan secara lokal di browser Anda!`,
+        })
+      } catch (storageErr) {
+        setStatusMessage({ type: 'error', text: err.message || 'Gagal menyimpan dataset ke server.' })
+      }
     } finally {
       setIsLoading(false)
     }
@@ -310,11 +341,37 @@ export function useDataEditor() {
 
   const loadDatasetById = useCallback(async (id: string) => {
     setIsLoading(true)
+    // 1. Cek local dataset terlebih dahulu jika ID bernilai local_
+    if (id.startsWith('local_')) {
+      const raw = localStorage.getItem(`statpro_dataset_${id}`)
+      if (raw) {
+        try {
+          const ds = JSON.parse(raw)
+          initFromDataset(ds)
+          setStatusMessage({ type: 'success', text: `Dataset lokal '${ds.name}' berhasil dimuat.` })
+          setIsLoading(false)
+          return
+        } catch {
+          // fallback ke fetch
+        }
+      }
+    }
+
     try {
       const ds = await datasetApi.fetchDataset(id)
       initFromDataset(ds)
       setStatusMessage({ type: 'success', text: `Dataset '${ds.name}' berhasil dimuat.` })
     } catch (err: any) {
+      // Coba fallback local storage jika fetch gagal
+      const raw = localStorage.getItem(`statpro_dataset_${id}`)
+      if (raw) {
+        try {
+          const ds = JSON.parse(raw)
+          initFromDataset(ds)
+          setStatusMessage({ type: 'success', text: `Dataset lokal '${ds.name}' berhasil dimuat (Offline mode).` })
+          return
+        } catch {}
+      }
       setStatusMessage({ type: 'error', text: err.message || 'Gagal memuat dataset.' })
     } finally {
       setIsLoading(false)

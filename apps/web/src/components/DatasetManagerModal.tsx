@@ -27,11 +27,41 @@ export function DatasetManagerModal({
   const loadList = async () => {
     setIsLoading(true)
     setError(null)
+    const localList: DatasetMetadata[] = []
+
+    // 1. Baca datasets dari LocalStorage browser
     try {
-      const data = await datasetApi.fetchDatasets()
-      setDatasets(data)
+      const rawIndex = localStorage.getItem('statpro_local_datasets_index')
+      const indexList: string[] = rawIndex ? JSON.parse(rawIndex) : []
+      for (const id of indexList) {
+        const raw = localStorage.getItem(`statpro_dataset_${id}`)
+        if (raw) {
+          const ds = JSON.parse(raw)
+          localList.push({
+            id: ds.id,
+            name: `${ds.name} (Lokal)`,
+            description: ds.description || '',
+            row_count: ds.rows?.length || 0,
+            variable_count: ds.variables?.length || 0,
+            missing_count: 0,
+            is_demo: Boolean(ds.is_demo),
+            created_at: ds.created_at || new Date().toISOString(),
+            updated_at: ds.updated_at || new Date().toISOString(),
+          })
+        }
+      }
+    } catch {}
+
+    // 2. Baca dari server backend
+    try {
+      const serverData = await datasetApi.fetchDatasets()
+      setDatasets([...localList, ...serverData])
     } catch (err: any) {
-      setError(err.message || 'Gagal memuat daftar dataset')
+      if (localList.length > 0) {
+        setDatasets(localList)
+      } else {
+        setError('Server backend offline. Belum ada dataset lokal yang tersimpan.')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -48,6 +78,19 @@ export function DatasetManagerModal({
   const handleDelete = async (id: string, name: string) => {
     const ok = window.confirm(`Apakah Anda yakin ingin menghapus dataset "${name}"?`)
     if (!ok) return
+
+    if (id.startsWith('local_')) {
+      localStorage.removeItem(`statpro_dataset_${id}`)
+      try {
+        const rawIndex = localStorage.getItem('statpro_local_datasets_index')
+        const indexList: string[] = rawIndex ? JSON.parse(rawIndex) : []
+        const filtered = indexList.filter(item => item !== id)
+        localStorage.setItem('statpro_local_datasets_index', JSON.stringify(filtered))
+      } catch {}
+      await loadList()
+      return
+    }
+
     try {
       await datasetApi.deleteDataset(id)
       await loadList()

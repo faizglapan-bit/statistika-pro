@@ -7,9 +7,10 @@ interface HeaderProps {
   backendStatus: BackendStatus
   project: ProjectState
   onNewProject: () => void
+  onOpenSettings?: () => void
 }
 
-export function Header({ backendStatus, project, onNewProject }: HeaderProps) {
+export function Header({ backendStatus, project, onNewProject, onOpenSettings }: HeaderProps) {
   const { language, toggleLanguage, t } = useLanguage()
 
   return (
@@ -62,14 +63,16 @@ export function Header({ backendStatus, project, onNewProject }: HeaderProps) {
       <div className="flex items-center gap-2 flex-shrink-0">
         {/* Backend status */}
         <div
-          className="flex items-center gap-1.5"
+          onClick={onOpenSettings}
+          className="flex items-center gap-1.5 transition-all duration-150"
           style={{
             padding: '4px 10px',
             borderRadius: '6px',
             background: 'var(--color-bg-tertiary)',
             border: '1px solid var(--color-border-subtle)',
+            cursor: onOpenSettings ? 'pointer' : 'default',
           }}
-          title={backendStatus === 'online' ? 'Backend API berjalan' : backendStatus === 'offline' ? 'Backend API tidak tersedia' : 'Memeriksa koneksi...'}
+          title={backendStatus === 'online' ? 'Backend API berjalan (Klik untuk membuka Pengaturan)' : 'Backend API tidak tersedia (Klik untuk menghubungkan)'}
         >
           <div
             className={clsx('status-dot', {
