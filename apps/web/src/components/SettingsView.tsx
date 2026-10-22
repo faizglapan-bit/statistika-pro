@@ -103,22 +103,26 @@ export const SettingsView: React.FC<Props> = ({ backendStatus, onRefreshHealth }
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {backendStatus === 'online' ? (
+          {backendStatus === 'online' || backendStatus === 'local' ? (
             <CheckCircle2 size={24} color="#10b981" />
           ) : (
             <XCircle size={24} color="#ef4444" />
           )}
           <div>
             <div style={{ fontSize: '14px', fontWeight: 600 }}>
-              Status Backend Saat Ini:{' '}
-              <span style={{ color: backendStatus === 'online' ? '#34d399' : '#f87171' }}>
-                {backendStatus === 'online' ? 'ONLINE (Terhubung)' : 'OFFLINE (Terputus)'}
+              Status Sistem Saat Ini:{' '}
+              <span style={{ color: backendStatus === 'online' ? '#34d399' : backendStatus === 'local' ? '#38bdf8' : '#f87171' }}>
+                {backendStatus === 'online'
+                  ? 'ONLINE (Cloud Server Terhubung)'
+                  : backendStatus === 'local'
+                  ? 'MODE LOKAL OFFLINE (Mesin Browser Siap)'
+                  : 'OFFLINE (Terputus)'}
               </span>
             </div>
             <div style={{ fontSize: '12px', color: '#94a3b8' }}>
               {backendStatus === 'online'
-                ? 'Semua kalkulasi statistik dan penyimpanan cloud siap digunakan.'
-                : 'Penyimpanan otomatis beralih ke Mode Lokal di browser Anda (LocalStorage).'}
+                ? 'Semua kalkulasi statistik dan penyimpanan cloud server siap digunakan.'
+                : 'Mesin statistik internal browser aktif: semua menu analisis & penyimpanan berjalan mandiri di browser tanpa server.'}
             </div>
           </div>
         </div>

@@ -26,7 +26,8 @@ export function useBackendHealth() {
       setHealthData(data)
       setStatus('online')
     } catch (err) {
-      setStatus('offline')
+      // Ketika server tidak aktif, beralih ke Mode Mesin Statistik Lokal (Browser)
+      setStatus('local')
       setHealthData(null)
       if (err instanceof Error) {
         setError(err.name === 'AbortError' ? 'Timeout' : err.message)

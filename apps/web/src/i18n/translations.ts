@@ -13,6 +13,7 @@ export const translations = {
     saving: 'Menyimpan...',
     backendOnline: 'Backend Online',
     backendOffline: 'Backend Offline',
+    backendLocal: 'Mode Lokal Siap',
     backendChecking: 'Memeriksa...',
     language: 'Bahasa',
 
@@ -73,6 +74,7 @@ export const translations = {
     saving: 'Saving...',
     backendOnline: 'Backend Online',
     backendOffline: 'Backend Offline',
+    backendLocal: 'Local Mode Ready',
     backendChecking: 'Checking...',
     language: 'Language',
 

@@ -72,18 +72,20 @@ export function Header({ backendStatus, project, onNewProject, onOpenSettings }:
             border: '1px solid var(--color-border-subtle)',
             cursor: onOpenSettings ? 'pointer' : 'default',
           }}
-          title={backendStatus === 'online' ? 'Backend API berjalan (Klik untuk membuka Pengaturan)' : 'Backend API tidak tersedia (Klik untuk menghubungkan)'}
+          title={backendStatus === 'online' ? 'Backend API Cloud Terhubung (Klik untuk membuka Pengaturan)' : 'Mesin Statistik Internal Browser Aktif (Klik untuk Pengaturan)'}
         >
           <div
             className={clsx('status-dot', {
-              online: backendStatus === 'online',
+              online: backendStatus === 'online' || backendStatus === 'local',
               offline: backendStatus === 'offline',
               checking: backendStatus === 'checking',
             })}
           />
-          <span style={{ fontSize: '11px', color: 'var(--color-text-secondary)', fontWeight: 500 }}>
+          <span style={{ fontSize: '11px', color: backendStatus === 'online' || backendStatus === 'local' ? '#34d399' : 'var(--color-text-secondary)', fontWeight: 600 }}>
             {backendStatus === 'online'
               ? t('backendOnline')
+              : backendStatus === 'local'
+              ? t('backendLocal')
               : backendStatus === 'offline'
               ? t('backendOffline')
               : t('backendChecking')}

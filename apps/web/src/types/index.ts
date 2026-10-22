@@ -2,7 +2,7 @@
 
 export type Language = 'id' | 'en'
 
-export type BackendStatus = 'online' | 'offline' | 'checking'
+export type BackendStatus = 'online' | 'offline' | 'checking' | 'local'
 
 export type MenuId =
   | 'dashboard'
