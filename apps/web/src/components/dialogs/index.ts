@@ -1,0 +1,6 @@
+export { DescriptiveDialog } from './DescriptiveDialog'
+export { ValidityDialog } from './ValidityDialog'
+export { ReliabilityDialog } from './ReliabilityDialog'
+export { CorrelationDialog } from './CorrelationDialog'
+export { RegressionDialog } from './RegressionDialog'
+export { DiagnosticsDialog } from './DiagnosticsDialog'

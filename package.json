@@ -1,0 +1,26 @@
+{
+  "name": "statistika-pro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Platform analisis statistik profesional berbasis web — alternatif SPSS",
+  "scripts": {
+    "dev": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/dev.ps1",
+    "start": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/start-background.ps1",
+    "stop": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/stop-background.ps1",
+    "status": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/status-background.ps1",
+    "restart": "powershell.exe -ExecutionPolicy Bypass -File ./scripts/stop-background.ps1 && powershell.exe -ExecutionPolicy Bypass -File ./scripts/start-background.ps1",
+    "web:dev": "npm --prefix apps/web run dev",
+    "web:build": "npm --prefix apps/web run build",
+    "web:test": "npm --prefix apps/web run test",
+    "api:test": "powershell.exe -Command \"& apps/api/.venv/Scripts/python.exe -m pytest apps/api/tests\""
+  },
+  "keywords": [
+    "spss",
+    "statistics",
+    "fastapi",
+    "react",
+    "vite"
+  ],
+  "author": "",
+  "license": "ISC"
+}

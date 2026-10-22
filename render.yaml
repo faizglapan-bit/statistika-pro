@@ -1,0 +1,22 @@
+# ==============================================================================
+# Render.com Blueprint — Statistika Pro API
+# ==============================================================================
+
+services:
+  - type: web
+    name: statistika-pro-api
+    runtime: python
+    region: singapore
+    plan: free
+    rootDir: apps/api
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: APP_ENV
+        value: production
+      - key: CORS_ORIGINS
+        value: "https://*.netlify.app,http://localhost:5173"
+      - key: UPLOAD_MAX_SIZE_MB
+        value: "50"

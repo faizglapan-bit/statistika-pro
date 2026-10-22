@@ -1,0 +1,40 @@
+# ==============================================================================
+# Netlify Configuration — Statistika Pro
+# ==============================================================================
+
+[build]
+  # Direktori aplikasi web frontend
+  base = "apps/web"
+  # Folder output build setelah vite build selesai
+  publish = "dist"
+  # Perintah build frontend
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# 1. Reverse Proxy ke Backend (Render.com)
+# Gantilah 'https://statistika-pro-api.onrender.com' di bawah ini dengan URL 
+# Web Service Render Anda yang sebenarnya setelah dibuat di dashboard Render.
+[[redirects]]
+  from = "/api/*"
+  to = "https://statistika-pro-api.onrender.com/api/:splat"
+  status = 200
+  force = false
+
+# 2. SPA Fallback: Arahkan semua routing React ke index.html agar tidak 404 saat refresh
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Cache-Control Headers untuk performa optimal di CDN Netlify
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
